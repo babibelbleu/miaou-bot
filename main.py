@@ -29,7 +29,7 @@ COMPUTER_OS = os.getenv("OS")
 
 intents = discord.Intents.all()
 intents.message_content = True
-bot = commands.Bot(intents=intents, command_prefix="!")
+bot = commands.Bot(intents=intents, command_prefix="=")
 
 
 @bot.event
@@ -80,14 +80,14 @@ async def on_member_join(member: discord.Member):
 
 
 @bot.hybrid_command(name="simulate_member_join", description="Simule l'évent on_member_join")
-@commands.has_role("membre IUT")
+@commands.has_any_role("membre IUT", 1264408428931977223, 1264408428931977221, 1264408428931977220)
 async def simulate_member_join(ctx: commands.Context, member: discord.Member):
     await on_member_join(member)
     await ctx.interaction.response.send_message("c'est bon", ephemeral=True)
 
 
 @bot.hybrid_command(name="sync", description="Synchronise les commandes avec l'arbre courant.")
-@commands.has_role("membre IUT")
+@commands.has_any_role("membre IUT", 1264408428931977223, 1264408428931977221, 1264408428931977220)
 async def sync(ctx: commands.Context):
     bot.tree.copy_global_to(guild=discord.Object(id=DISCORD_GUILD_ID))
     await bot.tree.sync(guild=discord.Object(id=DISCORD_GUILD_ID))
