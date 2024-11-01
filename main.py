@@ -82,7 +82,7 @@ async def on_member_join(member: discord.Member):
     new_data = []
 
     for item in datas:
-        if item[0] == 255 and item[1] == 255 and item[2] == 255:
+        if item[0] == 255 and item[1] == 255 and item[2] == 254:
             new_data.append((255, 255, 255, 0))
         else:
             new_data.append(item)
