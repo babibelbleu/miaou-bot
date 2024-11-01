@@ -2,6 +2,8 @@ import asyncio
 import os
 from dotenv import load_dotenv
 
+from PIL import Image
+
 # noinspection PyPackageRequirements
 import discord
 # noinspection PyPackageRequirements
@@ -71,13 +73,30 @@ async def on_member_join(member: discord.Member):
                    css_file="style_member_join.css",
                    save_as='page.png')
 
+    #Remove white bakcground (linux)
+    img = Image.open("page.png")
+    img = img.convert("RGBA")
+
+    datas = img.getdata()
+
+    new_data = []
+
+    for item in datas:
+        if item[0] == 255 and item[1] == 255 and item[2] == 255:
+            new_data.append((255, 255, 255, 0))
+        else:
+            new_data.append(item)
+
+    img.putdata(new_data)
+    img.save("./page_linux.png", "PNG")
+
     await asyncio.sleep(delay=0)
     await channel.send(
         content=f"❤-------------------❤---------------------❤---------------------❤-------------------❤\nWOOOOOO "
                 f"{member.mention} vient de rejoindre  🌸Le Panier Rose🌸 Bienvenue a toi ! ^^\n"
                 f"N'oublie surtout pas d'aller lire et d'accepter les <#1264593405883846718> pour avoir accès au reste "
                 f"du serveur, c'est super important !\n**Nous te souhaitons un bon séjour parmi nous ! ^^ 💖**",
-        file=discord.File("page.png")
+        file=discord.File("page_linux.png")
     )
     os.remove(f"{member.id}_card.html")
     os.remove("page.png")
