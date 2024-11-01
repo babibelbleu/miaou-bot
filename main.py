@@ -58,7 +58,7 @@ async def on_member_join(member: discord.Member):
     hti = Html2Image(size=(1800, 620))
 
     if COMPUTER_OS.casefold() == "UNIX".casefold():
-        hti.browser.flags = ["--no-sandbox", "--hide-scrollbar"]
+        hti.browser.flags = ["--no-sandbox", "--hide-scrollbars"]
 
     with open("member_join.html") as f:
         file_content = f.read()
