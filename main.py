@@ -14,6 +14,7 @@ load_dotenv()
 DISCORD_BOT_TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 DISCORD_GUILD_ID = None
 DISCORD_WELCOME_CHANNEL = None
+STATUS = os.getenv("STATUS")
 
 ENVIRONMENT = os.getenv("ENV")
 
@@ -34,7 +35,10 @@ bot = commands.Bot(intents=intents, command_prefix="=")
 
 @bot.event
 async def on_ready():
-    await bot.change_presence(activity=discord.Game(name="Made with <3 by Babibelbleu"))
+    if STATUS.casefold() == "MAINT".casefold():
+        await bot.change_presence(status=discord.Status.do_not_disturb, activity=discord.Game(name="Maintenance miaou"))
+    else:
+        await bot.change_presence(activity=discord.Game(name="Made with <3 by Babibelbleu"))
     print(f"Ready | alphav1 ")
 
 
@@ -98,6 +102,6 @@ async def sync(ctx: commands.Context):
 async def ping(ctx: commands.Context):
     await ctx.typing()
     await asyncio.sleep(1)
-    await ctx.send("Pong !")
+    await ctx.send("Miaou ! :cat:")
 
 bot.run(DISCORD_BOT_TOKEN)
