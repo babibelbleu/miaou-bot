@@ -105,6 +105,7 @@ async def on_member_join(member: discord.Member):
 @bot.hybrid_command(name="simulate_member_join", description="Simule l'évent on_member_join")
 @commands.has_any_role("membre IUT", 1264408428931977223, 1264408428931977221, 1264408428931977220)
 async def simulate_member_join(ctx: commands.Context, member: discord.Member):
+    await ctx.defer()
     await on_member_join(member)
     await ctx.interaction.response.send_message("c'est bon", ephemeral=True)
 
