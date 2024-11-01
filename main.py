@@ -100,6 +100,7 @@ async def on_member_join(member: discord.Member):
     )
     os.remove(f"{member.id}_card.html")
     os.remove("page.png")
+    os.remove("page_linux.png")
 
 
 @bot.hybrid_command(name="simulate_member_join", description="Simule l'évent on_member_join")
