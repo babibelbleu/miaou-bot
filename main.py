@@ -1,24 +1,14 @@
+# External libs import
+# execute command `pip install -r requirements.txt` to install all the dependencies
 import asyncio
-import os
-from dotenv import load_dotenv
 
-from PIL import Image
-
-# noinspection PyPackageRequirements
 import discord
-# noinspection PyPackageRequirements
-from discord.ext import commands
+from PIL import Image
 
 from html2image import Html2Image
 
-load_dotenv()
-
-DISCORD_BOT_TOKEN = os.getenv("DISCORD_BOT_TOKEN")
-DISCORD_GUILD_ID = None
-DISCORD_WELCOME_CHANNEL = None
-STATUS = os.getenv("STATUS")
-
-ENVIRONMENT = os.getenv("ENV")
+# constants import
+from globals import *
 
 if ENVIRONMENT.casefold() == "DEV".casefold():
     DISCORD_GUILD_ID = 700439581706682428
@@ -27,29 +17,33 @@ elif ENVIRONMENT.casefold() == "PROD".casefold():
     DISCORD_GUILD_ID = 1264408428697096284
     DISCORD_WELCOME_CHANNEL = 1264408430677065799
 
-
-COMPUTER_OS = os.getenv("OS")
-
-intents = discord.Intents.all()
-intents.message_content = True
-bot = commands.Bot(intents=intents, command_prefix="=")
+strings = strings["discord_bot"]
 
 
 @bot.event
 async def on_ready():
     if STATUS.casefold() == "MAINT".casefold():
-        await bot.change_presence(status=discord.Status.do_not_disturb, activity=discord.Game(name="Maintenance miaou"))
+        await bot.change_presence(
+            status=discord.Status.do_not_disturb,
+            activity=discord.Game(
+                name=strings["on_ready"]["statuses"]["maintenance"]
+            )
+        )
     else:
-        await bot.change_presence(activity=discord.Game(name="Made with <3 by Babibelbleu"))
-    print(f"Ready | alphav1 ")
+        await bot.change_presence(
+            activity=discord.Game(
+                name=strings["on_ready"]["statuses"]["online"]
+            )
+        )
+    print(f"{strings['on_ready']['ready_message']} | {strings['version']}")
 
 
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.MissingRole):
-        await ctx.send("Vous n'avez pas la permission d'utiliser cette commande.")
+        await ctx.send(strings["on_command_error"]["no_permission"])
     else:
-        await ctx.send(f"Une erreur inconnue est survenue : {error}")
+        await ctx.send(f"{strings['on_command_error']['unknown_error']} : {error}")
 
 
 @bot.event
@@ -57,6 +51,7 @@ async def on_member_join(member: discord.Member):
     channel = bot.get_channel(DISCORD_WELCOME_CHANNEL)
     hti = Html2Image(size=(1800, 620))
 
+    # sur les systèmes utilisant Unix, on doit désactiver le GUI du navigateur et cacher les scrollbars
     if COMPUTER_OS.casefold() == "UNIX".casefold():
         hti.browser.flags = ["--no-sandbox", "--hide-scrollbars"]
 
@@ -73,7 +68,7 @@ async def on_member_join(member: discord.Member):
                    css_file="style_member_join.css",
                    save_as='page.png')
 
-    #Remove white bakcground (linux)
+    # Remove white background
     img = Image.open("page.png")
     img = img.convert("RGBA")
 
@@ -88,19 +83,21 @@ async def on_member_join(member: discord.Member):
             new_data.append(item)
 
     img.putdata(new_data)
-    img.save("./page_linux.png", "PNG")
+    img.save("./page.png", "PNG")
 
+    # map welcome message
+    welcome_message = strings["on_member_join"]["welcome_message"].replace("{member.mention}", member.mention).replace("{server.name}", bot.get_guild(DISCORD_GUILD_ID).name)
+
+    # Sending welcome message
     await asyncio.sleep(delay=0)
     await channel.send(
-        content=f"❤-------------------❤---------------------❤---------------------❤-------------------❤\nWOOOOOO "
-                f"{member.mention} vient de rejoindre  🌸Le Panier Rose🌸 Bienvenue a toi ! ^^\n"
-                f"N'oublie surtout pas d'aller lire et d'accepter les <#1264593405883846718> pour avoir accès au reste "
-                f"du serveur, c'est super important !\n**Nous te souhaitons un bon séjour parmi nous ! ^^ 💖**",
-        file=discord.File("page_linux.png")
+        content=f"{welcome_message}",
+        file=discord.File("page.png")
     )
+
+    # Remove files to avoid space
     os.remove(f"{member.id}_card.html")
     os.remove("page.png")
-    os.remove("page_linux.png")
 
 
 @bot.hybrid_command(name="simulate_member_join", description="Simule l'évent on_member_join")
@@ -109,7 +106,7 @@ async def simulate_member_join(ctx: commands.Context, member: discord.Member):
     await ctx.defer()
     await asyncio.sleep(1)
     await on_member_join(member)
-    await ctx.interaction.response.send_message("c'est bon", ephemeral=True)
+    await ctx.interaction.response.send_message(strings["simulate_member_join"]["action_success"], ephemeral=True)
 
 
 @bot.hybrid_command(name="sync", description="Synchronise les commandes avec l'arbre courant.")
@@ -117,13 +114,14 @@ async def simulate_member_join(ctx: commands.Context, member: discord.Member):
 async def sync(ctx: commands.Context):
     bot.tree.copy_global_to(guild=discord.Object(id=DISCORD_GUILD_ID))
     await bot.tree.sync(guild=discord.Object(id=DISCORD_GUILD_ID))
-    await ctx.send("Commandes synchronisées")
+    await ctx.send(strings["sync"]["action_success"])
 
 
 @bot.hybrid_command()
 async def ping(ctx: commands.Context):
     await ctx.typing()
     await asyncio.sleep(1)
-    await ctx.send("Miaou ! :cat:")
+    await ctx.send(strings["ping"]["message"])
+
 
 bot.run(DISCORD_BOT_TOKEN)
