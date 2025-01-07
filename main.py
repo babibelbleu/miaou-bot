@@ -1,6 +1,7 @@
 # External libs import
 # execute command `pip install -r requirements.txt` to install all the dependencies
 import asyncio
+import os
 
 import discord
 from PIL import Image
@@ -50,6 +51,7 @@ async def on_command_error(ctx, error):
 async def on_member_join(member: discord.Member):
     channel = bot.get_channel(DISCORD_WELCOME_CHANNEL)
     hti = Html2Image(size=(1800, 620))
+    hti.load_file('background.png')
 
     # sur les systèmes utilisant Unix, on doit désactiver le GUI du navigateur et cacher les scrollbars
     if COMPUTER_OS.casefold() == "UNIX".casefold():
@@ -98,6 +100,14 @@ async def on_member_join(member: discord.Member):
     # Remove files to avoid space
     os.remove(f"{member.id}_card.html")
     os.remove("page.png")
+
+
+@bot.hybrid_command(name="setup_welcome_background_image", description="Met à jour l'image de fond du message de bienvenue")
+@commands.has_any_role("membre IUT", 1264408428931977223, 1264408428931977221)
+async def setup_welcome_background_image(ctx: commands.Context, file: discord.Attachment):
+    os.remove('./background.png')
+    await file.save('./background.png')
+    await ctx.send(strings["setup_welcome_background_image"]["action_success"])
 
 
 @bot.hybrid_command(name="simulate_member_join", description="Simule l'évent on_member_join")
