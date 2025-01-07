@@ -15,6 +15,9 @@
     "on_member_join": {
       "welcome_message": "❤-------------------❤---------------------❤---------------------❤-------------------❤\n{member.mention} vient de rejoindre {server.name} Bienvenue à toi ! ^^\nN'oublie surtout pas d'aller lire et d'accepter les <#1264593405883846718> pour avoir accès au reste du serveur, c'est super important !\n**Nous te souhaitons un bon séjour parmi nous ! ^^ \uD83D\uDC96**"
     },
+    "setup_welcome_background_image": {
+      "action_success": "Le fond d'écran a été mis à jour avec succès."
+    },
     "simulate_member_join": {
       "action_success": "La simulation a démarré avec succès."
     },
