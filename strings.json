@@ -1,0 +1,28 @@
+{
+  "discord_bot": {
+    "version": "0.2",
+    "on_ready": {
+      "ready_message": "Ready",
+      "statuses": {
+        "maintenance": "Maintenance miaou",
+        "online": "Made with <3 by Babibelbleu"
+      }
+    },
+    "on_command_error": {
+      "no_permission": "Vous n'avez pas la permission d'utiliser cette commande.",
+      "unknown_error": "Une erreur inconnue est survenue"
+    },
+    "on_member_join": {
+      "welcome_message": "❤-------------------❤---------------------❤---------------------❤-------------------❤\n{member.mention} vient de rejoindre {server.name} Bienvenue à toi ! ^^\nN'oublie surtout pas d'aller lire et d'accepter les <#1264593405883846718> pour avoir accès au reste du serveur, c'est super important !\n**Nous te souhaitons un bon séjour parmi nous ! ^^ \uD83D\uDC96**"
+    },
+    "simulate_member_join": {
+      "action_success": "La simulation a démarré avec succès."
+    },
+    "sync": {
+      "action_success": "Commandes synchronisées."
+    },
+    "ping": {
+      "message": "Miaou ! :cat:"
+    }
+  }
+}
