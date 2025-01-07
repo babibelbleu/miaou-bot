@@ -1,7 +1,6 @@
 # External libs import
 # execute command `pip install -r requirements.txt` to install all the dependencies
 import asyncio
-import os
 
 import discord
 from PIL import Image
@@ -45,6 +44,12 @@ async def on_command_error(ctx, error):
         await ctx.send(strings["on_command_error"]["no_permission"])
     else:
         await ctx.send(f"{strings['on_command_error']['unknown_error']} : {error}")
+
+
+@bot.event
+async def on_message(message: discord.Message):
+    if '<@1300938645108297779>' in message.content:
+        await bot.get_channel(message.channel.id).send("tagol laisse moi bosser")
 
 
 @bot.event
