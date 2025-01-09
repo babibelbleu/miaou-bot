@@ -12,11 +12,18 @@
       "no_permission": "Vous n'avez pas la permission d'utiliser cette commande.",
       "unknown_error": "Une erreur inconnue est survenue"
     },
+    "on_message": {
+      "automatic_bot_message": "tagol laisse moi bosser"
+    },
     "on_member_join": {
       "welcome_message": "❤-------------------❤---------------------❤---------------------❤-------------------❤\n{member.mention} vient de rejoindre {server.name} Bienvenue à toi ! ^^\nN'oublie surtout pas d'aller lire et d'accepter les <#1264593405883846718> pour avoir accès au reste du serveur, c'est super important !\n**Nous te souhaitons un bon séjour parmi nous ! ^^ \uD83D\uDC96**"
     },
     "setup_welcome_background_image": {
       "action_success": "Le fond d'écran a été mis à jour avec succès."
+    },
+    "edit_welcome_message": {
+      "what_to_edit": "Voici le rendu actuel de ce qui est affiché lorsqu'un membre rejoint le serveur discord. \n Que voulez-vous modifier ? (message | background)",
+      "user_choice_made": "ok"
     },
     "simulate_member_join": {
       "action_success": "La simulation a démarré avec succès."

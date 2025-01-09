@@ -2,10 +2,8 @@
 # execute command `pip install -r requirements.txt` to install all the dependencies
 import asyncio
 
-import discord
-from PIL import Image
-
-from html2image import Html2Image
+# utils import
+from utils import create_new_member_welcome_card, check
 
 # constants import
 from globals import *
@@ -48,49 +46,16 @@ async def on_command_error(ctx, error):
 
 @bot.event
 async def on_message(message: discord.Message):
+    # MiaouBot id
     if '<@1300938645108297779>' in message.content:
-        await bot.get_channel(message.channel.id).send("tagol laisse moi bosser")
+        await bot.get_channel(message.channel.id).send(strings["on_message"]["automatic_bot_message"])
 
 
 @bot.event
 async def on_member_join(member: discord.Member):
     channel = bot.get_channel(DISCORD_WELCOME_CHANNEL)
-    hti = Html2Image(size=(1800, 620))
-    hti.load_file('background.png')
 
-    # sur les systèmes utilisant Unix, on doit désactiver le GUI du navigateur et cacher les scrollbars
-    if COMPUTER_OS.casefold() == "UNIX".casefold():
-        hti.browser.flags = ["--no-sandbox", "--hide-scrollbars"]
-
-    with open("member_join.html") as f:
-        file_content = f.read()
-        file_content = file_content.replace("{NICKNAME}", member.name) \
-            .replace("{AVATAR_LINK}", member.avatar.url)
-
-        new_file = open(f"{member.id}_card.html", "w")
-        new_file.write(file_content)
-        new_file.close()
-
-    hti.screenshot(html_file=f"{member.id}_card.html",
-                   css_file="style_member_join.css",
-                   save_as='page.png')
-
-    # Remove white background
-    img = Image.open("page.png")
-    img = img.convert("RGBA")
-
-    datas = img.getdata()
-
-    new_data = []
-
-    for item in datas:
-        if item[0] == 255 and item[1] == 255 and item[2] == 254:
-            new_data.append((255, 255, 255, 0))
-        else:
-            new_data.append(item)
-
-    img.putdata(new_data)
-    img.save("./page.png", "PNG")
+    card = create_new_member_welcome_card(member)
 
     # map welcome message
     welcome_message = strings["on_member_join"]["welcome_message"].replace("{member.mention}", member.mention).replace("{server.name}", bot.get_guild(DISCORD_GUILD_ID).name)
@@ -99,12 +64,8 @@ async def on_member_join(member: discord.Member):
     await asyncio.sleep(delay=0)
     await channel.send(
         content=f"{welcome_message}",
-        file=discord.File("page.png")
+        file=card
     )
-
-    # Remove files to avoid space
-    os.remove(f"{member.id}_card.html")
-    os.remove("page.png")
 
 
 @bot.hybrid_command(name="setup_welcome_background_image", description="Met à jour l'image de fond du message de bienvenue")
@@ -113,6 +74,20 @@ async def setup_welcome_background_image(ctx: commands.Context, file: discord.At
     os.remove('./background.png')
     await file.save('./background.png')
     await ctx.send(strings["setup_welcome_background_image"]["action_success"])
+
+
+@bot.hybrid_command(name="edit_welcome_message", description="Modifie le message de bienvenue")
+@commands.has_any_role("membre IUT", 1264408428931977223, 1264408428931977221)
+async def edit_welcome_message(ctx: commands.Context):
+    card = create_new_member_welcome_card(ctx.author)
+    bot_message = await ctx.send(
+        strings["edit_welcome_message"]["what_to_edit"],
+        file=card,
+        ephemeral=True
+    )
+    user_edit_choice = await bot.wait_for('message', check=check)
+    await bot_message.edit(content=strings["edit_welcome_message"]["user_choice_made"])
+    pass
 
 
 @bot.hybrid_command(name="simulate_member_join", description="Simule l'évent on_member_join")
