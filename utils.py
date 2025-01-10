@@ -1,4 +1,5 @@
 # dependencies import
+import asyncio
 import json
 
 # noinspection PyPackageRequirements
@@ -26,7 +27,8 @@ def create_new_member_welcome_card(member: discord.Member):
     # constants
     from globals import COMPUTER_OS
 
-    hti = Html2Image(size=(1800, 620))
+    # Oversized image we crop
+    hti = Html2Image(size=(2000, 2000))
     hti.load_file('background.png')
 
     # sur les systèmes utilisant Unix, on doit désactiver le GUI du navigateur et cacher les scrollbars
@@ -63,11 +65,16 @@ def create_new_member_welcome_card(member: discord.Member):
     img.putdata(new_data)
     img.save("./page.png", "PNG")
 
-    file = discord.File("page.png")
+    # Get the content bounds.
+    content = img.getbbox()
 
-    # Remove files to avoid space
-    os.remove(f"{member.id}_card.html")
-    os.remove("page.png")
+    # Crop the image.
+    img = img.crop(content)
+
+    # Save the image.
+    img.save("./page.png", "PNG")
+
+    file = discord.File("page.png")
 
     return file
 

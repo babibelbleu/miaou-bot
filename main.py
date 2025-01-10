@@ -36,12 +36,12 @@ async def on_ready():
     print(f"{strings['on_ready']['ready_message']} | {strings['version']}")
 
 
-@bot.event
-async def on_command_error(ctx, error):
-    if isinstance(error, commands.MissingRole):
-        await ctx.send(strings["on_command_error"]["no_permission"])
-    else:
-        await ctx.send(f"{strings['on_command_error']['unknown_error']} : {error}")
+# @bot.event
+# async def on_command_error(ctx, error):
+#     if isinstance(error, commands.MissingRole):
+#         await ctx.send(strings["on_command_error"]["no_permission"])
+#     else:
+#         await ctx.send(f"{strings['on_command_error']['unknown_error']} : {error}")
 
 
 @bot.event
@@ -71,7 +71,9 @@ async def on_member_join(member: discord.Member):
 @bot.hybrid_command(name="setup_welcome_background_image", description="Met à jour l'image de fond du message de bienvenue")
 @commands.has_any_role("membre IUT", 1264408428931977223, 1264408428931977221)
 async def setup_welcome_background_image(ctx: commands.Context, file: discord.Attachment):
-    os.remove('./background.png')
+    if os.path.isfile('./background.png'):
+        os.remove('./background.png')
+
     await file.save('./background.png')
     await ctx.send(strings["setup_welcome_background_image"]["action_success"])
 
@@ -79,14 +81,21 @@ async def setup_welcome_background_image(ctx: commands.Context, file: discord.At
 @bot.hybrid_command(name="edit_welcome_message", description="Modifie le message de bienvenue")
 @commands.has_any_role("membre IUT", 1264408428931977223, 1264408428931977221)
 async def edit_welcome_message(ctx: commands.Context):
+    await ctx.defer()
     card = create_new_member_welcome_card(ctx.author)
     bot_message = await ctx.send(
         strings["edit_welcome_message"]["what_to_edit"],
         file=card,
         ephemeral=True
     )
+
+    # free memory and disk space
+    card.close()
+    os.remove(f"{ctx.author.id}_card.html")
+    os.remove("page.png")
+
     user_edit_choice = await bot.wait_for('message', check=check)
-    await bot_message.edit(content=strings["edit_welcome_message"]["user_choice_made"])
+    await bot_message.edit(content=strings["edit_welcome_message"]["user_choice_made"], attachments=[])
     pass
 
 
