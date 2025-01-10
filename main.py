@@ -3,6 +3,8 @@
 import asyncio
 
 # utils import
+import os
+
 from utils import create_new_member_welcome_card, check, update_json_file_from_dict
 
 # constants import
@@ -21,6 +23,7 @@ bot_strings = strings["discord_bot"]
 def reload_strings():
     global bot_strings
     bot_strings = strings["discord_bot"]
+
 
 @bot.event
 async def on_ready():
@@ -70,6 +73,11 @@ async def on_member_join(member: discord.Member):
         content=f"{welcome_message}",
         file=card
     )
+
+    # free memory and disk space
+    card.close()
+    os.remove(f"{member.id}_card.html")
+    os.remove("page.png")
 
 
 @bot.hybrid_command(name="setup_welcome_background_image", description="Met à jour l'image de fond du message de bienvenue")
@@ -138,7 +146,7 @@ async def simulate_member_join(ctx: commands.Context, member: discord.Member):
     await ctx.defer()
     await asyncio.sleep(1)
     await on_member_join(member)
-    await ctx.interaction.response.send_message(bot_strings["simulate_member_join"]["action_success"], ephemeral=True)
+    await ctx.interaction.followup.send(bot_strings["simulate_member_join"]["action_success"], ephemeral=True)
 
 
 @bot.hybrid_command(name="sync", description="Synchronise les commandes avec l'arbre courant.")

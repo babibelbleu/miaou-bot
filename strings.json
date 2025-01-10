@@ -1,41 +1,41 @@
 {
-  "discord_bot": {
-    "version": "0.2",
-    "on_ready": {
-      "ready_message": "Ready",
-      "statuses": {
-        "maintenance": "Maintenance miaou",
-        "online": "Made with <3 by Babibelbleu"
-      }
-    },
-    "on_command_error": {
-      "no_permission": "Vous n'avez pas la permission d'utiliser cette commande.",
-      "unknown_error": "Une erreur inconnue est survenue"
-    },
-    "on_message": {
-      "automatic_bot_message": "tagol laisse moi bosser"
-    },
-    "on_member_join": {
-      "welcome_message": "❤-------------------❤---------------------❤---------------------❤-------------------❤\n{member.mention} vient de rejoindre {server.name} Bienvenue à toi ! ^^\nN'oublie surtout pas d'aller lire et d'accepter les <#1264593405883846718> pour avoir accès au reste du serveur, c'est super important !\n**Nous te souhaitons un bon séjour parmi nous ! ^^ \uD83D\uDC96**"
-    },
-    "setup_welcome_background_image": {
-      "action_success": "Le fond d'écran a été mis à jour avec succès."
-    },
-    "edit_welcome_message": {
-      "what_to_edit": "Voici le rendu actuel de ce qui est affiché lorsqu'un membre rejoint le serveur discord. \n Que voulez-vous modifier ? (message | background)",
-      "user_choice_message": "Veuillez indiquer le nouveau message de bienvenue à mettre :",
-      "user_choice_background": "Veuillez envoyer sous format PNG le nouveau fond à mettre (1936 x 576) :",
-      "wrong_user_input": "Veuillez entrer une valeur autorisée (message | background)",
-      "action_success": "La modification a été effectuée avec succès. Tentez un /simulate_member_join pour voir les résultats !"
-    },
-    "simulate_member_join": {
-      "action_success": "La simulation a démarré avec succès."
-    },
-    "sync": {
-      "action_success": "Commandes synchronisées."
-    },
-    "ping": {
-      "message": "Miaou ! :cat:"
+    "discord_bot": {
+        "version": "0.2",
+        "on_ready": {
+            "ready_message": "Ready",
+            "statuses": {
+                "maintenance": "Maintenance miaou",
+                "online": "Made with <3 by Babibelbleu"
+            }
+        },
+        "on_command_error": {
+            "no_permission": "Vous n'avez pas la permission d'utiliser cette commande.",
+            "unknown_error": "Une erreur inconnue est survenue"
+        },
+        "on_message": {
+            "automatic_bot_message": "tagol laisse moi bosser"
+        },
+        "on_member_join": {
+            "welcome_message": "❤-------------------❤---------------------❤---------------------❤-------------------❤\\n{member.mention} vient de rejoindre {server.name} Bienvenue à toi ! ^^\\nN'oublie surtout pas d'aller lire et d'accepter les <#1264593405883846718> pour avoir accès au reste du serveur, c'est super important !\\n**Nous te souhaitons un bon séjour parmi nous ! ^^ \\uD83D\\uDC96**"
+        },
+        "setup_welcome_background_image": {
+            "action_success": "Le fond d'\u00e9cran a \u00e9t\u00e9 mis \u00e0 jour avec succ\u00e8s."
+        },
+        "edit_welcome_message": {
+            "what_to_edit": "Voici le rendu actuel de ce qui est affich\u00e9 lorsqu'un membre rejoint le serveur discord. \n Que voulez-vous modifier ? (message | background)",
+            "user_choice_message": "Veuillez indiquer le nouveau message de bienvenue \u00e0 mettre :",
+            "user_choice_background": "Veuillez envoyer sous format PNG le nouveau fond \u00e0 mettre (1936 x 576) :",
+            "wrong_user_input": "Veuillez entrer une valeur autoris\u00e9e (message | background)",
+            "action_success": "La modification a \u00e9t\u00e9 effectu\u00e9e avec succ\u00e8s. Tentez un /simulate_member_join pour voir les r\u00e9sultats !"
+        },
+        "simulate_member_join": {
+            "action_success": "La simulation a d\u00e9marr\u00e9 avec succ\u00e8s."
+        },
+        "sync": {
+            "action_success": "Commandes synchronis\u00e9es."
+        },
+        "ping": {
+            "message": "Miaou ! :cat:"
+        }
     }
-  }
 }
