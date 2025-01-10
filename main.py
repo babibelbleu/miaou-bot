@@ -3,7 +3,7 @@
 import asyncio
 
 # utils import
-from utils import create_new_member_welcome_card, check
+from utils import create_new_member_welcome_card, check, update_json_file_from_dict
 
 # constants import
 from globals import *
@@ -15,8 +15,12 @@ elif ENVIRONMENT.casefold() == "PROD".casefold():
     DISCORD_GUILD_ID = 1264408428697096284
     DISCORD_WELCOME_CHANNEL = 1264408430677065799
 
-strings = strings["discord_bot"]
+bot_strings = strings["discord_bot"]
 
+
+def reload_strings():
+    global bot_strings
+    bot_strings = strings["discord_bot"]
 
 @bot.event
 async def on_ready():
@@ -24,16 +28,16 @@ async def on_ready():
         await bot.change_presence(
             status=discord.Status.do_not_disturb,
             activity=discord.Game(
-                name=strings["on_ready"]["statuses"]["maintenance"]
+                name=bot_strings["on_ready"]["statuses"]["maintenance"]
             )
         )
     else:
         await bot.change_presence(
             activity=discord.Game(
-                name=strings["on_ready"]["statuses"]["online"]
+                name=bot_strings["on_ready"]["statuses"]["online"]
             )
         )
-    print(f"{strings['on_ready']['ready_message']} | {strings['version']}")
+    print(f"{bot_strings['on_ready']['ready_message']} | {bot_strings['version']}")
 
 
 # @bot.event
@@ -48,7 +52,7 @@ async def on_ready():
 async def on_message(message: discord.Message):
     # MiaouBot id
     if '<@1300938645108297779>' in message.content:
-        await bot.get_channel(message.channel.id).send(strings["on_message"]["automatic_bot_message"])
+        await bot.get_channel(message.channel.id).send(bot_strings["on_message"]["automatic_bot_message"])
 
 
 @bot.event
@@ -58,7 +62,7 @@ async def on_member_join(member: discord.Member):
     card = create_new_member_welcome_card(member)
 
     # map welcome message
-    welcome_message = strings["on_member_join"]["welcome_message"].replace("{member.mention}", member.mention).replace("{server.name}", bot.get_guild(DISCORD_GUILD_ID).name)
+    welcome_message = bot_strings["on_member_join"]["welcome_message"].replace("{member.mention}", member.mention).replace("{server.name}", bot.get_guild(DISCORD_GUILD_ID).name)
 
     # Sending welcome message
     await asyncio.sleep(delay=0)
@@ -75,7 +79,7 @@ async def setup_welcome_background_image(ctx: commands.Context, file: discord.At
         os.remove('./background.png')
 
     await file.save('./background.png')
-    await ctx.send(strings["setup_welcome_background_image"]["action_success"])
+    await ctx.send(bot_strings["setup_welcome_background_image"]["action_success"])
 
 
 @bot.hybrid_command(name="edit_welcome_message", description="Modifie le message de bienvenue")
@@ -84,7 +88,7 @@ async def edit_welcome_message(ctx: commands.Context):
     await ctx.defer()
     card = create_new_member_welcome_card(ctx.author)
     bot_message = await ctx.send(
-        strings["edit_welcome_message"]["what_to_edit"],
+        bot_strings["edit_welcome_message"]["what_to_edit"],
         file=card,
         ephemeral=True
     )
@@ -95,8 +99,37 @@ async def edit_welcome_message(ctx: commands.Context):
     os.remove("page.png")
 
     user_edit_choice = await bot.wait_for('message', check=check)
-    await bot_message.edit(content=strings["edit_welcome_message"]["user_choice_made"], attachments=[])
-    pass
+
+    while user_edit_choice.content.casefold() not in ['message'.casefold(), 'background'.casefold()]:
+        await user_edit_choice.delete()
+        await bot_message.edit(content=bot_strings["edit_welcome_message"]["wrong_user_input"], attachments=[])
+        user_edit_choice = await bot.wait_for('message', check=check)
+
+    await user_edit_choice.delete()
+
+    if user_edit_choice.content.casefold() == "message".casefold():
+        await bot_message.edit(content=bot_strings["edit_welcome_message"]["user_choice_message"], attachments=[])
+        new_message = await bot.wait_for('message', check=check)
+        new_message_content = new_message.content
+
+        await new_message.delete()
+
+        strings["discord_bot"]["on_member_join"]["welcome_message"] = new_message_content
+        update_json_file_from_dict("./strings.json", strings)
+        reload_strings()
+
+    if user_edit_choice.content.casefold() == "background".casefold():
+        await bot_message.edit(content=bot_strings["edit_welcome_message"]["user_choice_background"], attachments=[])
+        new_background = await bot.wait_for('message', check=check)
+        new_background_file = new_background.attachments[0]
+
+        if os.path.isfile('./background.png'):
+            os.remove('./background.png')
+
+        await new_background_file.save('./background.png')
+        await new_background.delete()
+
+    await bot_message.edit(content=bot_strings["edit_welcome_message"]["action_success"])
 
 
 @bot.hybrid_command(name="simulate_member_join", description="Simule l'évent on_member_join")
@@ -105,7 +138,7 @@ async def simulate_member_join(ctx: commands.Context, member: discord.Member):
     await ctx.defer()
     await asyncio.sleep(1)
     await on_member_join(member)
-    await ctx.interaction.response.send_message(strings["simulate_member_join"]["action_success"], ephemeral=True)
+    await ctx.interaction.response.send_message(bot_strings["simulate_member_join"]["action_success"], ephemeral=True)
 
 
 @bot.hybrid_command(name="sync", description="Synchronise les commandes avec l'arbre courant.")
@@ -113,14 +146,14 @@ async def simulate_member_join(ctx: commands.Context, member: discord.Member):
 async def sync(ctx: commands.Context):
     bot.tree.copy_global_to(guild=discord.Object(id=DISCORD_GUILD_ID))
     await bot.tree.sync(guild=discord.Object(id=DISCORD_GUILD_ID))
-    await ctx.send(strings["sync"]["action_success"])
+    await ctx.send(bot_strings["sync"]["action_success"])
 
 
 @bot.hybrid_command()
 async def ping(ctx: commands.Context):
     await ctx.typing()
     await asyncio.sleep(1)
-    await ctx.send(strings["ping"]["message"])
+    await ctx.send(bot_strings["ping"]["message"])
 
 
 bot.run(DISCORD_BOT_TOKEN)

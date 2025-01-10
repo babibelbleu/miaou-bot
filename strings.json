@@ -23,7 +23,10 @@
     },
     "edit_welcome_message": {
       "what_to_edit": "Voici le rendu actuel de ce qui est affiché lorsqu'un membre rejoint le serveur discord. \n Que voulez-vous modifier ? (message | background)",
-      "user_choice_made": "ok"
+      "user_choice_message": "Veuillez indiquer le nouveau message de bienvenue à mettre :",
+      "user_choice_background": "Veuillez envoyer sous format PNG le nouveau fond à mettre (1936 x 576) :",
+      "wrong_user_input": "Veuillez entrer une valeur autorisée (message | background)",
+      "action_success": "La modification a été effectuée avec succès. Tentez un /simulate_member_join pour voir les résultats !"
     },
     "simulate_member_join": {
       "action_success": "La simulation a démarré avec succès."
