@@ -1,10 +1,11 @@
 {
     "discord_bot": {
         "version": "0.2",
+        "rules": "Hey ! Bienvenue a toi dans **{server.name}**, voici le règlement a respecter pour maintenir une bon savoir vivre dans le serveur :pink_heart::light_blue_heart:\n(oui elles sont similaires a celles de ma chaine twitch)\n\n❤---------------------❤---------------------❤\n\nლ♡-Traitez tout le monde avec respect. Les insultes, les moqueries et les comportements haineux ne seront pas tolérés.\n\nლ♡-Toute forme de discours haineux, y compris les insultes homophobes, transphobes, racistes ou sexistes, entraînera un bannissement immédiat.\n\nლ♡-Évitez le spam, que ce soit des messages répétitifs, des emotes/emojis en excès ou des liens non autorisés.\n\nლ♡-Maintenez des discussions appropriées pour tous les âges. Pas de contenus explicites ou inappropriés.\n\nლ♡-Pour maintenir une ambiance détendue et accueillante, évitez les discussions politiques ou religieuses sensibles.\n\nლ♡-Ne faites pas de publicité pour d'autres chaînes, produits ou services sans autorisation préalable.\n\nლ♡-Et bien sur respectez les Administrateurs / Modérateurs et leurs décisions. Si vous avez un problème, adressez-vous à eux calmement.\n\n❤---------------------❤---------------------❤",
         "on_ready": {
             "ready_message": "Ready",
             "statuses": {
-                "maintenance": "Maintenance miaou",
+                "maintenance": "\uD83E\uDE9B Maintenance miaou",
                 "online": "Made with <3 by Babibelbleu"
             }
         },

@@ -3,19 +3,10 @@
 import asyncio
 
 # utils import
-import os
-
 from utils import create_new_member_welcome_card, check, update_json_file_from_dict
 
 # constants import
 from globals import *
-
-if ENVIRONMENT.casefold() == "DEV".casefold():
-    DISCORD_GUILD_ID = 700439581706682428
-    DISCORD_WELCOME_CHANNEL = 813158607155757157
-elif ENVIRONMENT.casefold() == "PROD".casefold():
-    DISCORD_GUILD_ID = 1264408428697096284
-    DISCORD_WELCOME_CHANNEL = 1264408430677065799
 
 bot_strings = strings["discord_bot"]
 
@@ -30,25 +21,45 @@ async def on_ready():
     if STATUS.casefold() == "MAINT".casefold():
         await bot.change_presence(
             status=discord.Status.do_not_disturb,
-            activity=discord.Game(
+            activity=discord.CustomActivity(
                 name=bot_strings["on_ready"]["statuses"]["maintenance"]
             )
         )
     else:
         await bot.change_presence(
-            activity=discord.Game(
+            activity=discord.CustomActivity(
                 name=bot_strings["on_ready"]["statuses"]["online"]
             )
         )
     print(f"{bot_strings['on_ready']['ready_message']} | {bot_strings['version']}")
 
 
-# @bot.event
-# async def on_command_error(ctx, error):
-#     if isinstance(error, commands.MissingRole):
-#         await ctx.send(strings["on_command_error"]["no_permission"])
-#     else:
-#         await ctx.send(f"{strings['on_command_error']['unknown_error']} : {error}")
+@bot.event
+async def on_raw_reaction_add(payload: discord.RawReactionActionEvent):
+    if DISCORD_RULES_CHANNEL == payload.channel_id:
+        guild = bot.get_guild(payload.guild_id)
+        member = guild.get_member(payload.user_id)
+        if str(payload.emoji) == "✅":
+            role = discord.utils.get(guild.roles, name="membre IUT")
+            await member.add_roles(role)
+
+
+@bot.event
+async def on_raw_reaction_remove(payload: discord.RawReactionActionEvent):
+    if DISCORD_RULES_CHANNEL == payload.channel_id:
+        guild = bot.get_guild(payload.guild_id)
+        member = guild.get_member(payload.user_id)
+        if str(payload.emoji) == "✅":
+            role = discord.utils.get(guild.roles, name="membre IUT")
+            await member.remove_roles(role)
+
+
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.MissingRole):
+        await ctx.send(bot_strings["on_command_error"]["no_permission"])
+    else:
+        await ctx.send(f"{bot_strings['on_command_error']['unknown_error']} : {error}")
 
 
 @bot.event
@@ -140,6 +151,21 @@ async def edit_welcome_message(ctx: commands.Context):
     await bot_message.edit(content=bot_strings["edit_welcome_message"]["action_success"])
 
 
+@bot.hybrid_command(name="setup_rules", description="Crée les règles.")
+@commands.has_any_role("testrole", "membre IUT", 1264408428931977223, 1264408428931977221)
+async def setup_rules(ctx: commands.Context):
+    embed = discord.Embed(
+        title="**Règles du serveur**",
+        color=discord.Color.from_rgb(245, 188, 243),
+        description=bot_strings["rules"].replace("{server.name}", ctx.guild.name)
+    )
+    embed.set_thumbnail(url="https://imgur.com/aoWxtH1.png")
+    bot_rules_message = await ctx.channel.send(embed=embed)
+    await bot_rules_message.add_reaction("✅")
+
+    await ctx.message.delete()
+
+
 @bot.hybrid_command(name="simulate_member_join", description="Simule l'évent on_member_join")
 @commands.has_any_role("membre IUT", 1264408428931977223, 1264408428931977221, 1264408428931977220)
 async def simulate_member_join(ctx: commands.Context, member: discord.Member):
@@ -147,6 +173,12 @@ async def simulate_member_join(ctx: commands.Context, member: discord.Member):
     await asyncio.sleep(1)
     await on_member_join(member)
     await ctx.interaction.followup.send(bot_strings["simulate_member_join"]["action_success"], ephemeral=True)
+
+
+@bot.hybrid_command(name="setup_role_reaction", description="Rajoute, supprime ou modifie des roles reactions")
+@commands.has_any_role("membre IUT", 1264408428931977223, 1264408428931977221, 1264408428931977220)
+async def setup_role_reaction(ctx: commands.Context):
+    await ctx.defer()
 
 
 @bot.hybrid_command(name="sync", description="Synchronise les commandes avec l'arbre courant.")
