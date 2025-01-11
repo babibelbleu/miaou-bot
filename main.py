@@ -8,7 +8,21 @@ from utils import create_new_member_welcome_card, check, update_json_file_from_d
 # constants import
 from globals import *
 
+# Twitch API
+from twitchAPI.twitch import Twitch
+from twitchAPI.eventsub.webhook import EventSubWebhook
+
+from flask import Flask
+
+
+#app = Flask(__name__)
+
 bot_strings = strings["discord_bot"]
+
+
+#@app.route('/webhook/user_goes_live/<user_id>')
+#def user_goes_live(user_id):
+#    return "yay"
 
 
 def reload_strings():
@@ -31,7 +45,19 @@ async def on_ready():
                 name=bot_strings["on_ready"]["statuses"]["online"]
             )
         )
+
+    # twitch = await Twitch('2fomyhujhfx0fzs9z78drx9j33hei2', 'b5tvxiggk13vjibitmz0jf3a7n0h3k')
+    # eventsub = EventSubWebhook("http://192.168.1.37", 5000, twitch)
+    # await eventsub.unsubscribe_all()
+    # eventsub.start()
+    # await eventsub.listen_stream_online("151111470", on_stream_start)
+
     print(f"{bot_strings['on_ready']['ready_message']} | {bot_strings['version']}")
+
+
+async def on_stream_start():
+    print("ok")
+    pass
 
 
 @bot.event
