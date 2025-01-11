@@ -40,7 +40,7 @@ async def on_raw_reaction_add(payload: discord.RawReactionActionEvent):
         guild = bot.get_guild(payload.guild_id)
         member = guild.get_member(payload.user_id)
         if str(payload.emoji) == "✅":
-            role = discord.utils.get(guild.roles, name="membre IUT")
+            role = discord.utils.get(guild.roles, name=DISCORD_MEMBER_ROLE)
             await member.add_roles(role)
 
 
@@ -50,7 +50,7 @@ async def on_raw_reaction_remove(payload: discord.RawReactionActionEvent):
         guild = bot.get_guild(payload.guild_id)
         member = guild.get_member(payload.user_id)
         if str(payload.emoji) == "✅":
-            role = discord.utils.get(guild.roles, name="membre IUT")
+            role = discord.utils.get(guild.roles, name=DISCORD_MEMBER_ROLE)
             await member.remove_roles(role)
 
 
