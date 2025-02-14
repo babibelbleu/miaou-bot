@@ -1,0 +1,9 @@
+{
+  "tasks": [
+    {
+      "name": "My first task !",
+      "description": "My first task's description !",
+      "trigger_timestamp": "1739493762.985183"
+    }
+  ]
+}

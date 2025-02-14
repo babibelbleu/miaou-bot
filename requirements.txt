@@ -4,3 +4,6 @@ html2image
 pillow
 twitchAPI
 flask
+
+# For Python >= 3.13
+audioop-lts

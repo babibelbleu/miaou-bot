@@ -9,6 +9,10 @@ from discord.ext import commands
 # import util functions
 from utils import get_dict_from_json_file
 
+# TODO : replace by a model logical structure
+# eg : from models import Task
+from Task import Task
+
 load_dotenv()
 
 # Discord related
@@ -40,3 +44,6 @@ elif ENVIRONMENT.casefold() == "PROD".casefold():
 
 # strings
 strings = get_dict_from_json_file("strings.json")
+
+# tasks
+tasks = [Task.from_dict(task_data) for task_data in get_dict_from_json_file("tasks.json")["tasks"]]

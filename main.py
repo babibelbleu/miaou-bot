@@ -1,9 +1,10 @@
 # External libs import
 # execute command `pip install -r requirements.txt` to install all the dependencies
 import asyncio
+import datetime
 
 # utils import
-from utils import create_new_member_welcome_card, check, update_json_file_from_dict
+from utils import create_new_member_welcome_card, check, update_json_file_from_dict, reload_tasks_from_source
 
 # constants import
 from globals import *
@@ -18,6 +19,7 @@ from flask import Flask
 #app = Flask(__name__)
 
 bot_strings = strings["discord_bot"]
+bot_tasks = tasks
 
 
 #@app.route('/webhook/user_goes_live/<user_id>')
@@ -28,6 +30,11 @@ bot_strings = strings["discord_bot"]
 def reload_strings():
     global bot_strings
     bot_strings = strings["discord_bot"]
+
+
+def reload_tasks():
+    global bot_tasks
+    bot_tasks = reload_tasks_from_source()
 
 
 @bot.event
@@ -190,6 +197,40 @@ async def setup_rules(ctx: commands.Context):
     await bot_rules_message.add_reaction("✅")
 
     await ctx.message.delete()
+
+
+@bot.hybrid_command(name="schedule_task", description="Crée un reminder")
+@commands.has_any_role("testrole", "membre IUT", 1264408428931977223, 1264408428931977221)
+async def schedule_task(ctx: commands.Context):
+    await ctx.defer()
+    bot_message = await ctx.send(
+        bot_strings["schedule_task"]["what_task_name"],
+        ephemeral=True
+    )
+    task_name_message = await bot.wait_for('message', check=check)
+    task_name = task_name_message.content
+    await task_name_message.delete()
+
+    await bot_message.edit(content=bot_strings["schedule_task"]["what_task_description"])
+    task_description_message = await bot.wait_for('message', check=check)
+    task_description = task_description_message.content
+    await task_description_message.delete()
+
+    await bot_message.edit(content=bot_strings["schedule_task"]["what_task_trigger_time"])
+    trigger_time_message = await bot.wait_for('message', check=check)
+
+    day, month, year = trigger_time_message.content.split("-")
+    trigger_time = datetime.datetime(int(year), int(month), int(day))
+
+    await trigger_time_message.delete()
+
+    task: Task = Task(
+        name=task_name,
+        description=task_description,
+        trigger_time=trigger_time
+    )
+
+    await bot_message.edit(content=f"{task.name}, {task.description}, {task.trigger_time.date()}")
 
 
 @bot.hybrid_command(name="simulate_member_join", description="Simule l'évent on_member_join")

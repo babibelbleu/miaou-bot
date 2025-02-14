@@ -29,6 +29,12 @@
             "wrong_user_input": "Veuillez entrer une valeur autoris\u00e9e (message | background)",
             "action_success": "La modification a \u00e9t\u00e9 effectu\u00e9e avec succ\u00e8s. Tentez un /simulate_member_join pour voir les r\u00e9sultats !"
         },
+        "schedule_task": {
+            "what_task_name": "Quel est le nom de la tâche ?",
+            "what_task_description": "Quel est la description de la tâche ?",
+            "what_task_trigger_time": "Quand voulez-vous être rappellé (JJ-MM-AAAA)",
+            "action_success": "La tâche a bien été enregistrée."
+        },
         "simulate_member_join": {
             "action_success": "La simulation a d\u00e9marr\u00e9 avec succ\u00e8s."
         },

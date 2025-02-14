@@ -10,6 +10,8 @@ import discord
 from html2image import Html2Image
 from PIL import Image
 
+from Task import Task
+
 
 def update_json_file_from_dict(json_file: str, json_dict: dict) -> None:
     with open(json_file, "w", encoding="utf8") as f:
@@ -82,3 +84,6 @@ def create_new_member_welcome_card(member: discord.Member):
 def check(msg: discord.Message):
     """checks a message to be sure it is not the bot nor a user command"""
     return not msg.content.startswith("=") and not msg.author.bot
+
+
+reload_tasks_from_source = lambda: [Task.from_dict(task_data) for task_data in get_dict_from_json_file("tasks.json")["tasks"]]
