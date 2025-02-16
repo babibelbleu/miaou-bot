@@ -8,6 +8,8 @@ from utils import create_new_member_welcome_card, check, update_json_file_from_d
 # constants import
 from globals import *
 
+from LogLevel import LogLevel
+
 # Twitch API
 from twitchAPI.twitch import Twitch
 from twitchAPI.eventsub.webhook import EventSubWebhook
@@ -78,14 +80,6 @@ async def on_raw_reaction_remove(payload: discord.RawReactionActionEvent):
         if str(payload.emoji) == "✅":
             role = discord.utils.get(guild.roles, name=DISCORD_MEMBER_ROLE)
             await member.remove_roles(role)
-
-
-@bot.event
-async def on_command_error(ctx, error):
-    if isinstance(error, commands.MissingRole):
-        await ctx.send(bot_strings["on_command_error"]["no_permission"])
-    else:
-        await ctx.send(f"{bot_strings['on_command_error']['unknown_error']} : {error}")
 
 
 @bot.event
@@ -205,6 +199,7 @@ async def simulate_member_join(ctx: commands.Context, member: discord.Member):
 @commands.has_any_role("membre IUT", 1264408428931977223, 1264408428931977221, 1264408428931977220)
 async def setup_role_reaction(ctx: commands.Context):
     await ctx.defer()
+    raise Exception
 
 
 @bot.hybrid_command(name="sync", description="Synchronise les commandes avec l'arbre courant.")
@@ -220,6 +215,43 @@ async def ping(ctx: commands.Context):
     await ctx.typing()
     await asyncio.sleep(1)
     await ctx.send(bot_strings["ping"]["message"])
+
+
+@bot.event
+async def on_command_error(ctx, error):
+    logger.exception(f"Exception raised inside code. exception: {str(error)}")
+
+    embed = discord.Embed(
+        title=f"{bot_strings['on_command_error']['unknown_error']}"
+    )
+    embed.add_field(
+        name=f"{bot_strings['on_command_error']['error']}",
+        value=str(error)
+    )
+    embed.add_field(
+        name=f"{bot_strings['on_command_error']['error_line']}",
+        value=str(error.__traceback__.tb_lineno)
+    )
+
+    await send_discord_log(LogLevel.ERROR, custom_embed=embed)
+
+    raise error
+
+
+async def send_discord_log(level: LogLevel, title: str = None, content: str = None, custom_embed: discord.Embed = None):
+    assert content is not None or custom_embed is not None, "Either content or custom_embed has to be NoneType."
+
+    embed = None if custom_embed is None else custom_embed
+
+    if custom_embed is None:
+        embed = discord.Embed(
+            title=title if title is not None else level.name,
+            description=content,
+            color=level.value[0]  # value is an instance of discord.Color => value : (<Colour>, )
+        )
+
+    channel = await bot.fetch_channel(DISCORD_LOG_CHANNEL_ID)
+    await channel.send(embed=embed)
 
 
 bot.run(DISCORD_BOT_TOKEN)

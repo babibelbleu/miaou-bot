@@ -11,7 +11,9 @@
         },
         "on_command_error": {
             "no_permission": "Vous n'avez pas la permission d'utiliser cette commande.",
-            "unknown_error": "Une erreur inconnue est survenue"
+            "unknown_error": "Une erreur non gérée est survenue !",
+            "error": "Erreur",
+            "error_line": "Ligne d'erreur"
         },
         "on_message": {
             "automatic_bot_message": "tagol laisse moi bosser"

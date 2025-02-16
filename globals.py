@@ -6,6 +6,8 @@ import discord
 # noinspection PyPackageRequirements
 from discord.ext import commands
 
+import logging
+
 # import util functions
 from utils import get_dict_from_json_file
 
@@ -32,11 +34,16 @@ if ENVIRONMENT.casefold() == "DEV".casefold():
     DISCORD_ROLE_REACT_CHANNEL = 1327293915291848804
     DISCORD_RULES_CHANNEL = 813175916141608990
     DISCORD_MEMBER_ROLE = "membre IUT"
+    DISCORD_LOG_CHANNEL_ID = 1340716297704570922
 elif ENVIRONMENT.casefold() == "PROD".casefold():
     DISCORD_GUILD_ID = 1264408428697096284
     DISCORD_WELCOME_CHANNEL = 1327343002057834618
     DISCORD_RULES_CHANNEL = 1264593405883846718
     DISCORD_MEMBER_ROLE = "🌱Membre"
+    DISCORD_LOG_CHANNEL_ID = 1264724263772881046
 
 # strings
 strings = get_dict_from_json_file("strings.json")
+
+# logger
+logger = logging.getLogger()
