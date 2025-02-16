@@ -38,7 +38,7 @@ def create_new_member_welcome_card(member: discord.Member):
     with open("member_join.html") as f:
         file_content = f.read()
         file_content = file_content.replace("{NICKNAME}", member.name) \
-            .replace("{AVATAR_LINK}", member.avatar.url)
+            .replace("{AVATAR_LINK}", member.avatar.url if member.avatar is not None else None)
 
         new_file = open(f"{member.id}_card.html", "w")
         new_file.write(file_content)
